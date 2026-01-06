@@ -1,0 +1,34 @@
+import { createBrowserRouter } from "react-router-dom";
+import App from "../App";
+import Login from "../auth/Login";
+import SignUp from "../auth/SignUp";
+import Home from "../pages/Home";
+
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
+      {
+        path: "/auth/login",
+        element:<privateRoutes>
+          <Login />
+        </privateRoutes>,
+      },
+      {
+        path: "/auth/sign-up",
+        element:<publicRoutes>
+          <SignUp />
+        </publicRoutes>,
+      },
+      {
+        path: "*",
+        element: <div className="p-4 text-center text-red-600 font-bold text-2xl h-screen flex justify-center items-center">404 - Page Not Found (React Router)</div>,
+      },
+    ],
+  },
+]);
