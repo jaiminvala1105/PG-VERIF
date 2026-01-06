@@ -1,24 +1,24 @@
+// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import {getAuth} from "firebase/auth";
-import {getFirestore} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
-
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBjOO4gGr8iBvNr1D8ConkQxfRvTBDgxbQ",
-  authDomain: "crud-ems-eca3d.firebaseapp.com",
-  projectId: "crud-ems-eca3d",
-  storageBucket: "crud-ems-eca3d.firebasestorage.app",
-  messagingSenderId: "434053866448",
-  appId: "1:434053866448:web:ae57f7c0fed755b7ea8fd5"
+  apiKey: "AIzaSyAUdtomvk_S5O7s3CVxjB5rILJaG9-VkK8",
+  authDomain: "pg-verif.firebaseapp.com",
+  projectId: "pg-verif",
+  storageBucket: "pg-verif.firebasestorage.app",
+  messagingSenderId: "671826929638",
+  appId: "1:671826929638:web:b989d5ffdcad3bed385827"
 };
 
-
+// Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
-let __AUTH=getAuth(firebaseApp);
-let __DB=getFirestore(firebaseApp);
-export default firebaseApp;
-export {__AUTH,__DB};
 
-//^JAIMIN personal firebase configuration
+export let __AUTH =getAuth(firebaseApp) 
+export let __DB =getFirestore(firebaseApp) 
+
+export default firebaseApp

@@ -3,6 +3,7 @@ import App from "../App";
 import Login from "../auth/Login";
 import SignUp from "../auth/SignUp";
 import Home from "../pages/Home";
+import ForgotPassword from "../auth/ForgotPassword";
 
 export const router = createBrowserRouter([
   {
@@ -15,15 +16,18 @@ export const router = createBrowserRouter([
       },
       {
         path: "/auth/login",
-        element:<privateRoutes>
-          <Login />
-        </privateRoutes>,
+        element:
+          <Login />          
       },
       {
         path: "/auth/sign-up",
-        element:<publicRoutes>
+        element:
           <SignUp />
-        </publicRoutes>,
+        
+      },
+      {
+        path:"/auth/forgot-password",
+        element:<ForgotPassword/>
       },
       {
         path: "*",
