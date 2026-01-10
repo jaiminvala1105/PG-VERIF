@@ -1,38 +1,8 @@
-import React, { useContext, useState } from "react";
-import { NavLink } from "react-router-dom";
-import harryImg from "../assets/harry.jpeg";
-import pgveriflogo from "../assets/pg-verif.png";
-import { AuthUser } from "../context/AuthuserContext";
+import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import harryImg from '../assets/harry.jpeg';
+import pgveriflogo from '../assets/pg-verif.png'
 const Navbar = () => {
-  let { authusers, logout } = useContext(AuthUser);
-
-  console.log(authusers);
-
-  const AnonmouseUser = () => {
-    return (
-      <>
-        <li>
-          <NavLink to={"/auth/login"}>Login</NavLink>
-        </li>
-        <li>
-          <NavLink to={"/auth/sign-up"}>Sign Up</NavLink>
-        </li>
-      </>
-    );
-  };
-  const AuthenticationUser = () => {
-    return (
-      <>
-        <li className="">
-          <NavLink to={"/pg"}>Pg's</NavLink>
-        </li>
-        <li>
-          <NavLink to={"/contact-us"}>Contact us</NavLink>
-        </li>
-      </>
-    );
-  };
-
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
@@ -83,22 +53,10 @@ const Navbar = () => {
 
             {isUserDropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl py-1 z-50 text-gray-700 border border-gray-100">
-                <div className="px-4 py-2 text-xs text-gray-500 border-b">
-                  Verified Tenant
-                </div>
-                <a href="#" className="block px-4 py-2 hover:bg-indigo-50">
-                  My KYC Status
-                </a>
-                <a href="#" className="block px-4 py-2 hover:bg-indigo-50">
-                  Saved PGs
-                </a>
-                <NavLink
-                onClick={logout}
-                  href="#"
-                  className="block px-4 py-2 text-red-600 hover:bg-red-50"
-                >
-                  Logout
-                </NavLink>
+                <div className="px-4 py-2 text-xs text-gray-500 border-b">Verified Tenant</div>
+                <a href="#" className="block px-4 py-2 hover:bg-indigo-50">My KYC Status</a>
+                <a href="#" className="block px-4 py-2 hover:bg-indigo-50">Saved PGs</a>
+                <a href="#" className="block px-4 py-2 text-red-600 hover:bg-red-50">Logout</a>
               </div>
             )}
           </div>
@@ -135,11 +93,10 @@ const Navbar = () => {
           }`}
         >
           <ul className="flex flex-col p-4 md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 font-medium items-center">
-            <li>
-              <NavLink to={"/"}>Home</NavLink>
-            </li>
-            {authusers ? <AuthenticationUser /> : <AnonmouseUser />}
-
+            <li><NavLink to="/" className={({isActive}) => `block py-2 ${isActive ? 'text-yellow-300' : 'text-indigo-100'} font-bold hover:scale-110 hover:text-indigo-200 transition-all duration-300 transform`}>Home</NavLink></li>
+            <li><NavLink to="/auth/login" className={({isActive}) => `block py-2 ${isActive ? 'text-yellow-300' : 'text-indigo-100'} hover:scale-110 hover:text-indigo-200 transition-all duration-300 transform`}>Login</NavLink></li>
+            <li><NavLink to="/auth/sign-up" className={({isActive}) => `block py-2 ${isActive ? 'text-yellow-300' : 'text-indigo-100'} hover:scale-110 hover:text-indigo-200 transition-all duration-300 transform`}>Sign Up</NavLink></li>
+            
             <li className="mt-2 md:mt-0">
               <div className="relative">
                 <input

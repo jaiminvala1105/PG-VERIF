@@ -1,12 +1,14 @@
 import React from 'react';
+import Hero from '../components/Hero';
 
 const Home = () => {
   return (
-    <div className="pt-24 px-4 container mx-auto">
-      <h1 className="text-3xl font-bold mb-4"> welcome to the pg-verif</h1>
-      <p className="text-gray-700">
-        
-      </p>
+    <div>
+      <Hero />
+      <div className="container mx-auto px-4 py-8">
+        {/* Placeholder for future content below the Hero section */}
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 dark:text-gray-200">More details coming soon...</h2>
+      </div>
     </div>
   );
 };
