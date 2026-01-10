@@ -4,6 +4,9 @@ import Login from "../auth/Login";
 import SignUp from "../auth/SignUp";
 import Home from "../pages/Home";
 import ForgotPassword from "../auth/ForgotPassword";
+import ContactUs from "../components/ContactUs";
+import Pg from "../components/Pg";
+import Navbar from "../components/Navbar";
 
 export const router = createBrowserRouter([
   {
@@ -30,9 +33,18 @@ export const router = createBrowserRouter([
         element:<ForgotPassword/>
       },
       {
+        path:'/contact-us',
+        element:<ContactUs/>
+      },
+      {
+        path:"/pg",
+        element:<Pg/>
+      },
+      {
         path: "*",
         element: <div className="p-4 text-center text-red-600 font-bold text-2xl h-screen flex justify-center items-center">404 - Page Not Found (React Router)</div>,
       },
+      
     ],
   },
 ]);
