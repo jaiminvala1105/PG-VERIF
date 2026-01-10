@@ -1,10 +1,57 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import harryImg from '../assets/harry.jpeg';
-import pgveriflogo from '../assets/pg-verif.png'
+import React, { useContext, useState } from "react";
+import { NavLink } from "react-router-dom";
+import harryImg from "../assets/harry.jpeg";
+import pgveriflogo from "../assets/pg-verif.png";
+import AuthuserContext, { AuthUser } from "../context/AuthuserContext";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+
+  let { authusers, logout } = useContext(AuthUser);
+
+  let linkClasses = ({ isActive }) => {
+    return `${
+      isActive
+        ? "bg-indigo-700 text-white shadow-md"
+        : "hover:text-indigo-600 hover:bg-indigo-100  "
+    } px-4 py-2 text-base text-white cursor-pointer rounded-lg transition-all duration-300 ease-in-out font-semibold`;
+  };
+
+  //! Anonoymous User => Login, SignUp
+  let AnonymousUser = () => {
+    return (
+      <>
+        <li>
+          <NavLink to={"/auth/login"} className={linkClasses}>
+            Login
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to={"/auth/sign-up"} className={linkClasses}>
+            Sign Up
+          </NavLink>
+        </li>
+      </>
+    );
+  };
+
+  //! Authenticated User => Profile, Logout
+  let AuthenticatedUser = () => {
+    return (
+      <>
+        <li className="flex items-center gap-3">
+          <NavLink to={"/contact-us"} className={linkClasses}>
+            ContactUs
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to={"/pg"} className={linkClasses}>
+            Pg
+          </NavLink>
+        </li>
+      </>
+    );
+  };
 
   return (
     <nav className="bg-indigo-600 fixed w-full z-30 top-0 start-0 border-b border-indigo-500 shadow-lg">
@@ -53,10 +100,21 @@ const Navbar = () => {
 
             {isUserDropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl py-1 z-50 text-gray-700 border border-gray-100">
-                <div className="px-4 py-2 text-xs text-gray-500 border-b">Verified Tenant</div>
-                <a href="#" className="block px-4 py-2 hover:bg-indigo-50">My KYC Status</a>
-                <a href="#" className="block px-4 py-2 hover:bg-indigo-50">Saved PGs</a>
-                <a href="#" className="block px-4 py-2 text-red-600 hover:bg-red-50">Logout</a>
+                <div className="px-4 py-2 text-xs text-gray-500 border-b">
+                  Verified Tenant
+                </div>
+                <a href="#" className="block px-4 py-2 hover:bg-indigo-50">
+                  My KYC Status
+                </a>
+                <a href="#" className="block px-4 py-2 hover:bg-indigo-50">
+                  Saved PGs
+                </a>
+                <a
+                  href="#"
+                  className="block px-4 py-2 text-red-600 hover:bg-red-50"
+                >
+                  Logout
+                </a>
               </div>
             )}
           </div>
@@ -93,10 +151,16 @@ const Navbar = () => {
           }`}
         >
           <ul className="flex flex-col p-4 md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 font-medium items-center">
-            <li><NavLink to="/" className={({isActive}) => `block py-2 ${isActive ? 'text-yellow-300' : 'text-indigo-100'} font-bold hover:scale-110 hover:text-indigo-200 transition-all duration-300 transform`}>Home</NavLink></li>
-            <li><NavLink to="/auth/login" className={({isActive}) => `block py-2 ${isActive ? 'text-yellow-300' : 'text-indigo-100'} hover:scale-110 hover:text-indigo-200 transition-all duration-300 transform`}>Login</NavLink></li>
-            <li><NavLink to="/auth/sign-up" className={({isActive}) => `block py-2 ${isActive ? 'text-yellow-300' : 'text-indigo-100'} hover:scale-110 hover:text-indigo-200 transition-all duration-300 transform`}>Sign Up</NavLink></li>
-            
+            <li>
+              <NavLink
+                to="/"
+                className={linkClasses}
+              >
+                Home
+              </NavLink>
+            </li>
+            {authusers ? <AuthenticatedUser /> : <AnonymousUser />}
+
             <li className="mt-2 md:mt-0">
               <div className="relative">
                 <input
