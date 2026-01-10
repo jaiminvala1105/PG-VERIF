@@ -1,13 +1,14 @@
 import { Outlet } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import './App.css'
+import React from 'react'
+import Layout from './layout/Layout'
 
 function App() {
   return (
-<>
-      <Navbar/>
-      <Outlet/>
-</>
+<React.StrictMode>
+      <Layout/>
+</React.StrictMode>
 
   )
 }
