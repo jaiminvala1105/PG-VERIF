@@ -67,13 +67,13 @@ const Navbar = ({ onOpenContact }) => {
     <nav className="bg-indigo-600 fixed w-full z-30 top-0 start-0 border-b border-indigo-500 shadow-lg">
       <div className="w-full flex flex-wrap items-center justify-between px-6 py-4">
         {/* Logo Section */}
-        <a href="/" className="flex items-center space-x-2">
+        <NavLink to="/" className="flex items-center space-x-2">
           <img
             src={pgveriflogo}
             alt="PG-VERIF Logo"
             className="h-16 w-auto object-contain rounded"
           />
-        </a>
+        </NavLink>
 
         <div className="flex items-center md:order-2 space-x-3">
           {/* Notification Bell (Crucial for Verification Updates) */}
@@ -102,29 +102,33 @@ const Navbar = ({ onOpenContact }) => {
               onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
             >
               <img
-                className="w-15 h-15 rounded-full border-2 border-indigo-400"
-                src={harryImg}
+                className="w-10 h-10 rounded-full object-cover border-2 border-indigo-400"
+                src={authusers?.photoURL || harryImg}
                 alt="User"
               />
             </button>
 
             {isUserDropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-xl py-1 z-50 text-gray-700 border border-gray-100">
-                <div className="px-4 py-2 text-xs text-gray-500 border-b">
-                  Verified Tenant
-                </div>
-                <a href="#" className="block px-4 py-2 hover:bg-indigo-50">
-                  My KYC Status
-                </a>
-                <a href="#" className="block px-4 py-2 hover:bg-indigo-50">
+                <NavLink
+                  to="/profile"
+                  className="block px-4 py-2 hover:bg-indigo-50"
+                >
+                  My Profile
+                </NavLink>
+                <NavLink
+                  to="/saved-pgs"
+                  className="block px-4 py-2 hover:bg-indigo-50"
+                >
                   Saved PGs
-                </a>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-red-600 hover:bg-red-50"
+                </NavLink>
+                <div className="border-t border-gray-100 my-1"></div>
+                <button
+                  onClick={logout}
+                  className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
                 >
                   Logout
-                </a>
+                </button>
               </div>
             )}
           </div>
@@ -162,10 +166,7 @@ const Navbar = ({ onOpenContact }) => {
         >
           <ul className="flex flex-col p-4 md:p-0 mt-4 md:flex-row md:space-x-8 md:mt-0 font-medium items-center">
             <li>
-              <NavLink
-                to="/"
-                className={linkClasses}
-              >
+              <NavLink to="/" className={linkClasses}>
                 Home
               </NavLink>
             </li>

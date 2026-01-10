@@ -4,16 +4,18 @@ import Login from "../auth/Login";
 import SignUp from "../auth/SignUp";
 import Home from "../pages/Home";
 import ForgotPassword from "../auth/ForgotPassword";
-import ContactUs from './../components/ContactUs';
-import Pg from './../components/Pg';
+import Pg from "../components/Pg";
+import ContactUs from "../components/ContactUs";
+import Profile from "../pages/profile/Profile";
+import Layout from "../layout/Layout";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <Layout />,
     children: [
       {
-        path: "/",
+        index:true,
         element: <Home />,
       },
       {
@@ -42,6 +44,17 @@ export const router = createBrowserRouter([
       {
         path:"/pg",
         element:<Pg/>
+      },
+      {
+        path:"/profile",
+        element:<Profile/>,
+        children:[
+          {
+            index:true,
+            element:<Profile/>
+          },
+          
+        ]
       },
       {
         path: "*",
