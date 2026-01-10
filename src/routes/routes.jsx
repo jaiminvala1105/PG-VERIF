@@ -4,6 +4,8 @@ import Login from "../auth/Login";
 import SignUp from "../auth/SignUp";
 import Home from "../pages/Home";
 import ForgotPassword from "../auth/ForgotPassword";
+import ContactUs from './../components/ContactUs';
+import Pg from './../components/Pg';
 
 export const router = createBrowserRouter([
   {
@@ -31,7 +33,11 @@ export const router = createBrowserRouter([
       },
       {
         path:'/contact-us',
-        element:<ContactUs/>
+        element: (
+          <div className="pt-28 min-h-screen bg-gray-950 flex justify-center items-start">
+             <ContactUs/>
+          </div>
+        )
       },
       {
         path:"/pg",

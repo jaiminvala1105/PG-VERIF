@@ -1,264 +1,188 @@
-import React, { useState } from 'react';
-import { __DB } from "../backend/firebaseConfig"; 
-import { toast } from "react-hot-toast";
-import { addDoc as firestoreAddDoc, collection as firestoreCollection } from "firebase/firestore";
+import React, { useState, useEffect, useRef } from 'react';
+import { MapPin, User, Users, IndianRupee, Search } from 'lucide-react';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 const Hero = () => {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    collegeName: '',
-    companyName: '',
-    contactNumber: '',
-    email: '',
-    userType: 'Student', // Default to Student
-    consent: false
+  const [filters, setFilters] = useState({
+    location: '',
+    gender: '',
+    occupancy: '',
+    budget: ''
   });
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-  };
+  const [locationSuggestions, setLocationSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchTimeout = useRef(null);
 
-  const handleUserTypeChange = (type) => {
-    setFormData(prev => ({ ...prev, userType: type }));
-  };
+  // Handle Location Search (Nominatim)
+  const handleLocationChange = (e) => {
+    const value = e.target.value;
+    setFilters(prev => ({ ...prev, location: value }));
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    // Basic Validation
-    if (!formData.firstName || !formData.lastName || !formData.contactNumber || !formData.email) {
-      toast.error("Please fill in all required fields.");
+    // Debounce API call
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    if (!value) {
+      setLocationSuggestions([]);
       return;
     }
 
-    if (!formData.consent) {
-      toast.error("Please agree to the Terms and Privacy Policy.");
-      return;
-    }
-
-    try {
-      const collectionRef = firestoreCollection(__DB, "inquiries");
-      await firestoreAddDoc(collectionRef, {
-        ...formData,
-        createdAt: new Date().toISOString()
-      });
-      
-      toast.success("Inquiry sent successfully! We'll contact you soon.");
-      
-      // Reset Form
-      setFormData({
-        firstName: '',
-        lastName: '',
-        collegeName: '',
-        companyName: '',
-        contactNumber: '',
-        email: '',
-        userType: 'Student',
-        consent: false
-      });
-
-    } catch (error) {
-      console.error("Error adding document: ", error);
-      toast.error("Failed to send inquiry. Please try again.");
-    }
+    searchTimeout.current = setTimeout(async () => {
+      try {
+        const response = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${value}&countrycodes=in&limit=5`);
+        setLocationSuggestions(response.data);
+        setShowSuggestions(true);
+      } catch (error) {
+        console.error("Error fetching locations:", error);
+      }
+    }, 300);
   };
 
-  const properties = [
-    {
-      id: 1,
-      name: "Pg-Verif Aamrakunj",
-      location: "PG in Chandkheda",
-      gender: "Unisex",
-      sharing: ["Triple", "Double"],
-      image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", // Placeholder
-    },
-    {
-      id: 2,
-      name: "Pg-Verif Navrangpura ",
-      location: "PG in Navrangpura",
-      gender: "Male",
-      sharing: ["Double", "Triple"],
-      image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", // Placeholder
-    },
-    {
-      id: 3,
-      name: "Pg-Verif Bopal",
-      location: "PG in Bopal",
-      gender: "Male",
-      sharing: ["Double", "Single"],
-      image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", // Placeholder
-    }
-  ];
+  const selectLocation = (place) => {
+    setFilters(prev => ({ ...prev, location: place.display_name.split(',')[0] })); // Just taking the first part for cleaner UI
+    setShowSuggestions(false);
+  };
+
+  const handleSearch = () => {
+    console.log("Searching with:", filters);
+    toast.success("Searching for PGs...");
+    // Future integration: Navigate to /pg page with query params
+  };
 
   return (
-    <div className="bg-gray-950 text-white min-h-screen py-8 pt-28"> 
-      {/* Container to align content */}
-      <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-8">
-        
-        {/* LEFT SECTION: Filters & Cards */}
-        <div className="lg:w-2/3">
+    <div className="bg-gray-950 text-white min-h-[90vh] flex flex-col items-center justify-center relative pt-20 px-4">
+      {/* Background Glow */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+
+      {/* Main Heading */}
+      <div className="text-center z-10 mb-12 animate-fade-in-up">
+        <h1 className="text-4xl md:text-6xl font-bold mb-3 tracking-tight">
+          Find Your Perfect PG
+          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500 mt-2">
+            Accommodation
+          </span>
+        </h1>
+        <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
+          Discover comfortable and affordable paying guest options in your preferred location
+        </p>
+      </div>
+
+      {/* Search Bar Container */}
+      <div className="w-full max-w-5xl bg-gray-900/80 backdrop-blur-md border border-gray-800 rounded-3xl p-4 shadow-2xl z-20 relative">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
           
-          {/* Filters */}
-          <div className="flex flex-wrap gap-3 mb-8">
-            <button className="flex items-center space-x-2 px-4 py-2 border border-gray-700 rounded-full hover:bg-gray-800 transition">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-              <span>Filters</span>
-            </button>
-            {['Navrangpura', 'Chandkheda', 'Bopal', 'Nirma'].map((filter) => (
-              <button key={filter} className="px-5 py-2 border border-gray-700 rounded-full text-gray-300 hover:bg-gray-800 transition">
-                {filter}
-              </button>
-            ))}
-          </div>
-
-          {/* Property Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {properties.map((prop) => (
-              <div key={prop.id} className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-indigo-500/10 transition-shadow flex flex-col h-full">
-                <div className="h-48 overflow-hidden shrink-0">
-                  <img src={prop.image} alt={prop.name} className="w-full h-full object-cover hover:scale-110 transition-transform duration-500" />
-                </div>
-                <div className="p-4 flex flex-col flex-grow">
-                  <h3 className="text-xl font-bold mb-1">{prop.name}</h3>
-                  <p className="text-gray-400 text-xs mb-4">{prop.location}</p>
-                  
-                  {/* Icons / Amenities Mockup */}
-                  <div className="flex space-x-2 mb-4">
-                    {/* Placeholder Icons */}
-                    <div className="p-2 bg-gray-800 rounded-lg text-center flex-1">
-                      <span className="block text-xs text-gray-400">Gender</span>
-                      <span className="text-[10px] block truncate">{prop.gender}</span>
-                    </div>
-                    {prop.sharing.slice(0, 2).map((share, idx) => (
-                      <div key={idx} className="p-2 bg-gray-800 rounded-lg text-center flex-1">
-                        <span className="block text-xs text-gray-400">Share</span>
-                        <span className="text-[10px] block truncate">{share}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <button className="w-full py-2 border border-orange-500 text-orange-500 rounded-full font-semibold hover:bg-orange-600 hover:text-white transition mt-auto">
-                    EXPLORE
+          {/* Location Input */}
+          <div className="md:col-span-4 relative group">
+            <div className="flex items-center space-x-3 bg-gray-800/50 p-3 rounded-2xl border border-gray-700/50 group-focus-within:border-blue-500/50 transition">
+              <MapPin className="text-gray-400 w-5 h-5 flex-shrink-0" />
+              <div className="w-full">
+                <input
+                  type="text"
+                  placeholder="Location (City, Area)"
+                  value={filters.location}
+                  onChange={handleLocationChange}
+                  onFocus={() => setShowSuggestions(true)}
+                  className="w-full bg-transparent outline-none text-white placeholder-gray-500 text-sm"
+                />
+              </div>
+            </div>
+            {/* Suggestions Dropdown */}
+            {showSuggestions && locationSuggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800 border border-gray-700 rounded-xl shadow-xl overflow-hidden z-50">
+                {locationSuggestions.map((place) => (
+                  <button
+                    key={place.place_id}
+                    onClick={() => selectLocation(place)}
+                    className="w-full text-left px-4 py-3 hover:bg-gray-700 text-sm text-gray-300 transition"
+                  >
+                    {place.display_name}
                   </button>
-                </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
+
+          {/* Gender Preference */}
+          <div className="md:col-span-2">
+            <div className="flex items-center space-x-3 bg-gray-800/50 p-3 rounded-2xl border border-gray-700/50 hover:border-gray-600 transition">
+              <User className="text-gray-400 w-5 h-5" />
+              <select 
+                className="w-full bg-transparent outline-none text-white text-sm appearance-none cursor-pointer"
+                value={filters.gender}
+                onChange={(e) => setFilters({...filters, gender: e.target.value})}
+              >
+                <option value="" className="bg-gray-800 text-gray-400">Gender</option>
+                <option value="Male" className="bg-gray-800">Boys</option>
+                <option value="Female" className="bg-gray-800">Girls</option>
+                <option value="Unisex" className="bg-gray-800">Unisex</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Occupancy */}
+          <div className="md:col-span-2">
+            <div className="flex items-center space-x-3 bg-gray-800/50 p-3 rounded-2xl border border-gray-700/50 hover:border-gray-600 transition">
+              <Users className="text-gray-400 w-5 h-5" />
+              <select 
+                className="w-full bg-transparent outline-none text-white text-sm appearance-none cursor-pointer"
+                value={filters.occupancy}
+                onChange={(e) => setFilters({...filters, occupancy: e.target.value})}
+              >
+                <option value="" className="bg-gray-800 text-gray-400">Occupancy</option>
+                <option value="Single" className="bg-gray-800">Single</option>
+                <option value="Double" className="bg-gray-800">Double</option>
+                <option value="Triple" className="bg-gray-800">Triple</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Budget */}
+          <div className="md:col-span-2">
+            <div className="flex items-center space-x-3 bg-gray-800/50 p-3 rounded-2xl border border-gray-700/50 hover:border-gray-600 transition">
+              <IndianRupee className="text-gray-400 w-5 h-5" />
+              <select 
+                className="w-full bg-transparent outline-none text-white text-sm appearance-none cursor-pointer"
+                value={filters.budget}
+                onChange={(e) => setFilters({...filters, budget: e.target.value})}
+              >
+                <option value="" className="bg-gray-800 text-gray-400">Budget</option>
+                <option value="5000-10000" className="bg-gray-800">₹5k - ₹10k</option>
+                <option value="10000-15000" className="bg-gray-800">₹10k - ₹15k</option>
+                <option value="15000+" className="bg-gray-800">₹15k+</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Search Button */}
+          <div className="md:col-span-2">
+            <button 
+              onClick={handleSearch}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold p-3 rounded-2xl transition flex items-center justify-center space-x-2"
+            >
+              <Search className="w-5 h-5" />
+              <span>Search PG</span>
+            </button>
+          </div>
+
         </div>
 
-        {/* RIGHT SECTION: Form */}
-        <div className="lg:w-1/3">
-          <div className="bg-gray-900 bg-opacity-50 p-6 rounded-3xl border border-gray-800 backdrop-blur-sm sticky top-28">
-            <h2 className="text-3xl font-bold mb-1">Interested</h2>
-            <h2 className="text-3xl font-bold mb-4 text-blue-200">in a <span className="text-blue-400">Hostel?</span></h2>
-            <p className="text-gray-400 text-sm mb-6">Tell us your contact number and we'll reach out to you soon.</p>
-
-            <form onSubmit={handleSubmit} className="space-y-4 ">
-              <div className="flex gap-4">
-                <div className="w-1/2">
-                   {/* <label className="block text-xs text-gray-500 mb-1">First Name</label> */}
-                   <input 
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    placeholder="First name"
-                    className="w-full bg-transparent border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500 placeholder-gray-600"
-                   />
-                </div>
-                <div className="w-1/2">
-                   {/* <label className="block text-xs text-gray-500 mb-1">Last Name</label> */}
-                   <input 
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    placeholder="Last name"
-                    className="w-full bg-transparent border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500 placeholder-gray-600"
-                   />
-                </div>
-              </div>
-
-              {formData.userType === 'Student' ? (
-                <input 
-                  name="collegeName"
-                  value={formData.collegeName}
-                  onChange={handleChange}
-                  placeholder="College name"
-                  className="w-full bg-transparent border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500 placeholder-gray-600"
-                />
-              ) : (
-                <input 
-                  name="companyName"
-                  value={formData.companyName || ''}
-                  onChange={handleChange}
-                  placeholder="Company Name"
-                  className="w-full bg-transparent border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500 placeholder-gray-600"
-                />
-              )}
-
-              <div className="relative">
-                <span className="absolute left-3 top-3 text-gray-500">+91</span>
-                <input 
-                  name="contactNumber"
-                  value={formData.contactNumber}
-                  onChange={handleChange}
-                  placeholder="Contact number"
-                  className="w-full bg-transparent border border-gray-700 rounded-lg p-3 pl-12 text-white focus:outline-none focus:border-indigo-500 placeholder-gray-600"
-                />
-              </div>
-
-              <input 
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email ID"
-                className="w-full bg-transparent border border-gray-700 rounded-lg p-3 text-white focus:outline-none focus:border-indigo-500 placeholder-gray-600"
-              />
-
-              {/* User Type Toggle */}
-              <div className="flex bg-gray-800 rounded-lg p-1">
-                <button 
-                  type="button"
-                  onClick={() => handleUserTypeChange('Student')}
-                  className={`flex-1 py-2 text-sm rounded-md transition ${formData.userType === 'Student' ? 'bg-gray-700 text-white shadow' : 'text-gray-400 hover:text-white'}`}
-                >
-                  Student
-                </button>
-                <button 
-                  type="button"
-                  onClick={() => handleUserTypeChange('Salaried')}
-                  className={`flex-1 py-2 text-sm rounded-md transition ${formData.userType === 'Salaried' ? 'bg-gray-700 text-white shadow' : 'text-gray-400 hover:text-white'}`}
-                >
-                  Salaried
-                </button>
-              </div>
-
-              {/* Consent */}
-              <div className="flex items-start space-x-2">
-                <input 
-                  type="checkbox" 
-                  name="consent"
-                  checked={formData.consent}
-                  onChange={handleChange}
-                  className="mt-1 w-4 h-4 bg-transparent border-gray-600 rounded focus:ring-indigo-500 focus:ring-offset-gray-900" 
-                />
-                <label className="text-xs text-gray-500 leading-tight">
-                  I have read and agreed to the <a href="#" className="text-orange-500 hover:underline">Terms of Services</a> and <a href="#" className="text-orange-500 hover:underline">Privacy Policy</a> and hereby confirm to proceed.
-                </label>
-              </div>
-
-              <button type="submit" className="w-full py-3 bg-orange-700 hover:bg-orange-600 text-white font-bold rounded-full transition shadow-lg shadow-orange-900/50">
-                GET A CALL BACK
-              </button>
-
-            </form>
-          </div>
+        {/* Popular Cities */}
+        <div className="mt-6 flex flex-wrap items-center gap-2 text-sm text-gray-400">
+          <span className="mr-2">Popular:</span>
+          {['Mumbai', 'Delhi', 'Bangalore', 'Pune', 'Hyderabad', 'Ahmedabad'].map((city) => (
+            <button 
+              key={city}
+              onClick={() => {
+                setFilters(prev => ({...prev, location: city}));
+                handleSearch();
+              }}
+              className="px-3 py-1 bg-gray-800 rounded-full hover:bg-gray-700 hover:text-white transition cursor-pointer"
+            >
+              {city}
+            </button>
+          ))}
         </div>
-
       </div>
     </div>
   );

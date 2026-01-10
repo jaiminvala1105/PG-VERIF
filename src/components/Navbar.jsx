@@ -1,13 +1,21 @@
 import React, { useContext, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import harryImg from "../assets/harry.jpeg";
 import pgveriflogo from "../assets/pg-verif.png";
-import AuthuserContext, { AuthUser } from "../context/AuthuserContext";
-const Navbar = () => {
+import { AuthUser } from "../Context/AuthUserContext";
+
+const Navbar = ({ onOpenContact }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
 
+  const navigate = useNavigate();
+
   let { authusers, logout } = useContext(AuthUser);
+
+  const handleContactClick = () => {
+    navigate('/');
+    onOpenContact();
+  };
 
   let linkClasses = ({ isActive }) => {
     return `${
@@ -16,6 +24,8 @@ const Navbar = () => {
         : "hover:text-indigo-600 hover:bg-indigo-100  "
     } px-4 py-2 text-base text-white cursor-pointer rounded-lg transition-all duration-300 ease-in-out font-semibold`;
   };
+
+  const buttonClasses = "hover:text-indigo-600 hover:bg-indigo-100 px-4 py-2 text-base text-white cursor-pointer rounded-lg transition-all duration-300 ease-in-out font-semibold bg-transparent border-none";
 
   //! Anonoymous User => Login, SignUp
   let AnonymousUser = () => {
@@ -40,9 +50,9 @@ const Navbar = () => {
     return (
       <>
         <li className="flex items-center gap-3">
-          <NavLink to={"/contact-us"} className={linkClasses}>
+          <button onClick={handleContactClick} className={buttonClasses}>
             ContactUs
-          </NavLink>
+          </button>
         </li>
         <li>
           <NavLink to={"/pg"} className={linkClasses}>
