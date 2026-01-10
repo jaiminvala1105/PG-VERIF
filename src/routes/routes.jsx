@@ -4,7 +4,6 @@ import Login from "../auth/Login";
 import SignUp from "../auth/SignUp";
 import Home from "../pages/Home";
 import ForgotPassword from "../auth/ForgotPassword";
-import ContactUs from './../components/ContactUs';
 
 export const router = createBrowserRouter([
   {
