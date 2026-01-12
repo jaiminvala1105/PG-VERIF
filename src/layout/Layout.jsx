@@ -10,8 +10,8 @@ const Layout = () => {
 
   return (
     <div>
-      <Navbar />
-      <main className="pt-24 min-h-screen">
+      <Navbar onOpenContact={() => setShowContactModal(true)} />
+      <main className={`${location.pathname === '/' ? '' : 'pt-28'} min-h-screen`}>
         <Outlet />
       </main>
 
