@@ -3,7 +3,10 @@ import { MapPin, User, Users, IndianRupee, Search } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
+import { useNavigate } from 'react-router-dom';
+
 const Hero = () => {
+  const navigate = useNavigate();
   const [filters, setFilters] = useState({
     location: '',
     gender: '',
@@ -46,11 +49,11 @@ const Hero = () => {
   const handleSearch = () => {
     console.log("Searching with:", filters);
     toast.success("Searching for PGs...");
-    // Future integration: Navigate to /pg page with query params
+    navigate('/pg', { state: filters });
   };
 
   return (
-    <div className="bg-gray-950 text-white min-h-[90vh] flex flex-col items-center justify-center relative pt-20 px-4">
+    <div className="bg-gray-950 text-white min-h-[60vh] flex flex-col items-center justify-center relative">
       {/* Background Glow */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />

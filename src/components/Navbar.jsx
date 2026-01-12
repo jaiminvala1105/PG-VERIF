@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import harryImg from "../assets/harry.jpeg";
 import pgveriflogo from "../assets/pg-verif.png";
@@ -8,11 +8,26 @@ import { FetchDataFromBackend } from "../context/BackendUserContext";
 const Navbar = ({ onOpenContact }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const navigate = useNavigate();
 
   let { authusers, logout } = useContext(AuthUser);
   let {userData}=useContext(FetchDataFromBackend)
+
+  // Handle Scroll Effect
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleContactClick = () => {
     navigate('/');
@@ -23,7 +38,7 @@ const Navbar = ({ onOpenContact }) => {
     return `${
       isActive
         ? "bg-indigo-700 text-white shadow-md"
-        : "hover:text-indigo-600 hover:bg-indigo-100  "
+        : "hover:text-indigo-600 hover:bg-indigo-100"
     } px-4 py-2 text-base text-white cursor-pointer rounded-lg transition-all duration-300 ease-in-out font-semibold`;
   };
 
@@ -73,7 +88,11 @@ const Navbar = ({ onOpenContact }) => {
   };
 
   return (
-    <nav className="bg-indigo-600 fixed w-full z-30 top-0 start-0 border-b border-indigo-500 shadow-lg">
+    <nav className={`fixed w-full z-30 top-0 start-0 transition-all duration-300 ${
+      isScrolled 
+        ? "bg-indigo-900/90 backdrop-blur-md shadow-lg border-b border-indigo-800" 
+        : "bg-transparent border-transparent shadow-none"
+    } ${isMenuOpen ? "bg-indigo-900" : ""}`}>
       <div className="w-full flex flex-wrap items-center justify-between px-6 py-4">
         {/* Logo Section */}
         <NavLink to="/" className="flex items-center space-x-2">

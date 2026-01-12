@@ -1,7 +1,10 @@
 import React from 'react';
 import { MapPin, Star, User, Wifi, Utensils, Zap } from 'lucide-react';
 
+import { useNavigate } from 'react-router-dom';
+
 const FeaturedPGs = () => {
+  const navigate = useNavigate();
   const pgs = [
     {
       id: 1,
@@ -54,7 +57,7 @@ const FeaturedPGs = () => {
   ];
 
   return (
-    <div className="bg-gray-950 py-16 px-4">
+    <div className="bg-gray-950 py-8 px-4">
       <div className="container mx-auto">
         
         {/* Section Header */}
@@ -134,7 +137,7 @@ const FeaturedPGs = () => {
 
         {/* View All Button */}
         <div className="text-center mt-12">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full transition shadow-lg hover:shadow-blue-500/25">
+          <button onClick={() => navigate('/pg')} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-full transition shadow-lg hover:shadow-blue-500/25">
             View All PGs
           </button>
         </div>
