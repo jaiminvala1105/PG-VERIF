@@ -91,7 +91,7 @@ const Navbar = ({ onOpenContact }) => {
     <nav className={`fixed w-full z-30 top-0 start-0 transition-all duration-300 ${
       isScrolled 
         ? "bg-indigo-900/90 backdrop-blur-md shadow-lg border-b border-indigo-800" 
-        : "bg-transparent border-transparent shadow-none"
+        : "bg-indigo-900/90 border-transparent shadow-none"
     } ${isMenuOpen ? "bg-indigo-900" : ""}`}>
       <div className="w-full flex flex-wrap items-center justify-between px-6 py-4">
         {/* Logo Section */}

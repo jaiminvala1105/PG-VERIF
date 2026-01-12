@@ -32,11 +32,15 @@ export const router = createBrowserRouter([
         element: <ForgotPassword />,
       },
       {
+        path: "/admin/pg",
+        element: <AdminPg />,
+      },
+      {
         path:'/contact-us',
         element: (
-          <div className="pt-28 min-h-screen bg-gray-950 flex justify-center items-start">
+          
              <ContactUs/>
-          </div>
+         
         )
       },
       {
