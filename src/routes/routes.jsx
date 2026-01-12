@@ -8,6 +8,7 @@ import Pg from "../components/Pg";
 import ContactUs from "../components/ContactUs";
 import Profile from "../pages/profile/Profile";
 import Layout from "../layout/Layout";
+import AdminPg from "../admin/AdminPg";
 
 export const router = createBrowserRouter([
   {
@@ -15,52 +16,51 @@ export const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
-        index:true,
+        index: true,
         element: <Home />,
       },
       {
         path: "/auth/login",
-        element:
-          <Login />          
+        element: <Login />,
       },
       {
         path: "/auth/sign-up",
-        element:
-          <SignUp />
-        
+        element: <SignUp />,
       },
       {
-        path:"/auth/forgot-password",
-        element:<ForgotPassword/>
+        path: "/auth/forgot-password",
+        element: <ForgotPassword />,
       },
       {
-        path:'/contact-us',
-        element: (
-          <div className="pt-28 min-h-screen bg-gray-950 flex justify-center items-start">
-             <ContactUs/>
-          </div>
-        )
+        path: "/admin/pg",
+        element: <AdminPg/>,
       },
       {
-        path:"/pg",
-        element:<Pg/>
+        path: "/contact-us",
+        element: <ContactUs />,
       },
       {
-        path:"/profile",
-        element:<Profile/>,
-        children:[
+        path: "/pg",
+        element: <Pg />,
+      },
+      {
+        path: "/profile",
+        element: <Profile />,
+        children: [
           {
-            index:true,
-            element:<Profile/>
+            index: true,
+            element: <Profile />,
           },
-          
-        ]
+        ],
       },
       {
         path: "*",
-        element: <div className="p-4 text-center text-red-600 font-bold text-2xl h-screen flex justify-center items-center">404 - Page Not Found (React Router)</div>,
+        element: (
+          <div className="p-4 text-center text-red-600 font-bold text-2xl h-screen flex justify-center items-center">
+            404 - Page Not Found (React Router)
+          </div>
+        ),
       },
-      
     ],
   },
 ]);

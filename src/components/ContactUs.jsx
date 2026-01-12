@@ -70,7 +70,7 @@ const ContactUs = ({ onClose }) => {
   };
 
   return (
-    <div className="bg-gray-900 bg-opacity-95 p-6 rounded-3xl border border-gray-800 backdrop-blur-sm relative max-w-md w-full mx-auto shadow-2xl">
+    <div className="bg-gray-900 bg-opacity-95 p-6 rounded-3xl border border-gray-800 backdrop-blur-sm relative max-w-md w-full mx-auto shadow-2xl mt-2">
       {/* Close Button */}
       {onClose && (
         <button 
