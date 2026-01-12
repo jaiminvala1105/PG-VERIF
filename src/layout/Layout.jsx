@@ -10,8 +10,8 @@ const Layout = () => {
 
   return (
     <div>
-      <Navbar onOpenContact={() => setShowContactModal(true)} />
-      <main className="pt-22 min-h-screen">
+      <Navbar />
+      <main className="pt-28 min-h-screen">
         <Outlet />
       </main>
 

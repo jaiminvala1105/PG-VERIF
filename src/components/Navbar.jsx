@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import harryImg from "../assets/harry.jpeg";
 import pgveriflogo from "../assets/pg-verif.png";
 import { AuthUser } from "../Context/AuthUserContext";
+import { FetchDataFromBackend } from "../context/BackendUserContext";
 
 const Navbar = ({ onOpenContact }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,6 +13,7 @@ const Navbar = ({ onOpenContact }) => {
   const navigate = useNavigate();
 
   let { authusers, logout } = useContext(AuthUser);
+  let {userData}=useContext(FetchDataFromBackend)
 
   // Handle Scroll Effect
   useEffect(() => {
@@ -64,10 +66,17 @@ const Navbar = ({ onOpenContact }) => {
   let AuthenticatedUser = () => {
     return (
       <>
+       {userData?.role === "admin" && (
+          <li>
+            <NavLink to={"/admin/pg"} className={linkClasses}>
+              Admin
+            </NavLink>
+          </li>
+        )}
         <li className="flex items-center gap-3">
-          <button onClick={handleContactClick} className={buttonClasses}>
+          <NavLink to={'/contact-us'} onClick={handleContactClick} className={buttonClasses}>
             ContactUs
-          </button>
+          </NavLink>
         </li>
         <li>
           <NavLink to={"/pg"} className={linkClasses}>
