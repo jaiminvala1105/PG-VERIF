@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import harryImg from "../assets/harry.jpeg";
 import pgveriflogo from "../assets/pg-verif.png";
 import { AuthUser } from "../Context/AuthUserContext";
@@ -11,6 +11,7 @@ const Navbar = ({ onOpenContact }) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   let { authusers, logout } = useContext(AuthUser);
   let {userData}=useContext(FetchDataFromBackend)
@@ -18,16 +19,25 @@ const Navbar = ({ onOpenContact }) => {
   // Handle Scroll Effect
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      // Trigger effect after scrolling 30-40% of the viewport height
+      const scrollThreshold = window.innerHeight * 0.35; 
+      if (window.scrollY > scrollThreshold) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    if (location.pathname === '/') {
+      window.addEventListener("scroll", handleScroll);
+      // Reset scroll state when on home page
+      handleScroll(); 
+    } else {
+      setIsScrolled(true); // Always "scrolled" style on other pages
+    }
+
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [location.pathname]);
 
   const handleContactClick = () => {
     navigate('/');
@@ -39,10 +49,10 @@ const Navbar = ({ onOpenContact }) => {
       isActive
         ? "bg-indigo-700 text-white shadow-md"
         : "hover:text-indigo-600 hover:bg-indigo-100"
-    } px-4 py-2 text-base text-white cursor-pointer rounded-lg transition-all duration-300 ease-in-out font-semibold`;
+    } px-4 py-2 text-base text-indigo-50 cursor-pointer rounded-lg transition-all duration-300 ease-in-out font-semibold`;
   };
 
-  const buttonClasses = "hover:text-indigo-600 hover:bg-indigo-100 px-4 py-2 text-base text-white cursor-pointer rounded-lg transition-all duration-300 ease-in-out font-semibold bg-transparent border-none";
+  const buttonClasses = "hover:text-indigo-600 hover:bg-indigo-100 px-4 py-2 text-base text-indigo-50 cursor-pointer rounded-lg transition-all duration-300 ease-in-out font-semibold bg-transparent border-none";
 
   //! Anonoymous User => Login, SignUp
   let AnonymousUser = () => {
@@ -88,10 +98,12 @@ const Navbar = ({ onOpenContact }) => {
   };
 
   return (
-    <nav className={`fixed w-full z-30 top-0 start-0 transition-all duration-300 ${
-      isScrolled 
-        ? "bg-indigo-900/90 backdrop-blur-md shadow-lg border-b border-indigo-800" 
-        : "bg-transparent border-transparent shadow-none"
+    <nav className={`fixed w-full z-30 top-0 start-0 transition-all duration-500 ease-in-out ${
+      location.pathname !== '/' 
+        ? "bg-indigo-600 shadow-lg border-b border-indigo-500" // Solid indigo for non-home pages
+        : isScrolled 
+          ? "bg-indigo-950/40 backdrop-blur-lg shadow-lg border-b border-indigo-500/20" 
+          : "bg-transparent border-transparent shadow-none"
     } ${isMenuOpen ? "bg-indigo-900" : ""}`}>
       <div className="w-full flex flex-wrap items-center justify-between px-6 py-4">
         {/* Logo Section */}
@@ -163,7 +175,7 @@ const Navbar = ({ onOpenContact }) => {
 
           {/* Mobile Toggle */}
           <button
-            className="md:hidden text-white p-2"
+            className="md:hidden text-indigo-50 p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <svg
