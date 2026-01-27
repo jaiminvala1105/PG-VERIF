@@ -9,7 +9,7 @@ const FeaturedPGs = () => {
     {
       id: 1,
       name: "Sunshine Boys PG",
-      location: "Koramangala, Bangalore",
+      location: "Ahmedabad, Gujarat",
       rating: 4.5,
       reviews: 124,
       sharing: "Double",
@@ -21,7 +21,7 @@ const FeaturedPGs = () => {
     {
       id: 2,
       name: "Elite Girls Hostel",
-      location: "Powai, Mumbai",
+      location: "gandhinagar, Gujarat",
       rating: 4.8,
       reviews: 89,
       sharing: "Single",

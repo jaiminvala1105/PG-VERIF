@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthUser } from "../../context/AuthuserContext";
 import { updateProfile } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -22,6 +23,7 @@ import {
 
 const Profile = () => {
   const { authusers } = useContext(AuthUser);
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -156,6 +158,7 @@ const Profile = () => {
 
       toast.success("Profile updated successfully!");
       setIsEditing(false);
+      navigate("/");
     } catch (error) {
       console.error("Error updating profile:", error);
       toast.error(error.message || "Failed to update profile");

@@ -40,8 +40,10 @@ const Navbar = ({ onOpenContact }) => {
   }, [location.pathname]);
 
   const handleContactClick = () => {
-    navigate('/');
-    onOpenContact();
+    // navigate('/'); // Removed forced navigation to allow modal to open on current page
+    if (onOpenContact) {
+      onOpenContact();
+    }
   };
 
   let linkClasses = ({ isActive }) => {
@@ -78,8 +80,8 @@ const Navbar = ({ onOpenContact }) => {
       <>
        {userData?.role === "admin" && (
           <li>
-            <NavLink to={"/admin/pg"} className={linkClasses}>
-              Admin
+            <NavLink to={"/admin"} className={linkClasses}>
+              Dashboard
             </NavLink>
           </li>
         )}
@@ -90,7 +92,7 @@ const Navbar = ({ onOpenContact }) => {
         </li>
         <li>
           <NavLink to={"/pg"} className={linkClasses}>
-            Pg
+            PG
           </NavLink>
         </li>
       </>
