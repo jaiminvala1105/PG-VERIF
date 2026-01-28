@@ -117,7 +117,7 @@ const Footer = () => {
               {[
                 { name: 'List Your PG', path: '/list-your-pg' },
                 { name: 'Owner Dashboard', path: '/admin' },
-                { name: 'Support', path: '/contact-us' }
+                { name: 'Support', path: '/help-center' }
               ].map((link) => (
                 <li key={link.name}>
                   <Link 

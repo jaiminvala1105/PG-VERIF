@@ -77,16 +77,46 @@ const AdminPGs = () => {
 
   const handleDelete = async (id, e) => {
     e.stopPropagation();
-    if (window.confirm("Are you sure you want to delete this PG?")) {
-      try {
-        await deleteDoc(doc(__DB, 'pgs', id));
-        toast.success("PG Deleted Successfully!");
-        fetchPGs();
-      } catch (error) {
-        console.error("Error deleting PG:", error);
-        toast.error("Failed to delete PG");
+    
+    // Custom toast confirmation
+    toast((t) => (
+      <div className="flex flex-col gap-3">
+        <div>
+          <p className="font-semibold text-gray-900">Delete PG</p>
+          <p className="text-sm text-gray-600 mt-1">Are you sure you want to delete this PG? This action cannot be undone.</p>
+        </div>
+        <div className="flex gap-2 justify-end">
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={async () => {
+              toast.dismiss(t.id);
+              try {
+                await deleteDoc(doc(__DB, 'pgs', id));
+                toast.success("PG Deleted Successfully!");
+                fetchPGs();
+              } catch (error) {
+                console.error("Error deleting PG:", error);
+                toast.error("Failed to delete PG");
+              }
+            }}
+            className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: Infinity,
+      position: 'top-center',
+      style: {
+        maxWidth: '500px',
       }
-    }
+    });
   };
 
   const handleEditClick = (pg) => {

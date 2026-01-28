@@ -2,10 +2,11 @@ import React, { useContext, useState, useEffect } from "react";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import harryImg from "../assets/harry.jpeg";
 import pgveriflogo from "../assets/pg-verif.png";
-import { AuthUser } from "../Context/AuthUserContext";
+import { AuthUser } from "../context/AuthUserContext";
 import { FetchDataFromBackend } from "../context/BackendUserContext";
+import { FavoritesContext } from "../context/FavoritesContext";
 
-const Navbar = ({ onOpenContact }) => {
+const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -15,6 +16,7 @@ const Navbar = ({ onOpenContact }) => {
 
   let { authusers, logout } = useContext(AuthUser);
   let {userData}=useContext(FetchDataFromBackend)
+  let { savedItems } = useContext(FavoritesContext);
 
   // Handle Scroll Effect
   useEffect(() => {
@@ -39,12 +41,7 @@ const Navbar = ({ onOpenContact }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [location.pathname]);
 
-  const handleContactClick = () => {
-    // navigate('/'); // Removed forced navigation to allow modal to open on current page
-    if (onOpenContact) {
-      onOpenContact();
-    }
-  };
+
 
   let linkClasses = ({ isActive }) => {
     return `${
@@ -86,8 +83,8 @@ const Navbar = ({ onOpenContact }) => {
           </li>
         )}
         <li className="flex items-center gap-3">
-          <NavLink to={'/contact-us'} onClick={handleContactClick} className={buttonClasses}>
-            ContactUs
+          <NavLink to={'/help-center'} className={buttonClasses}>
+            Help Center
           </NavLink>
         </li>
         <li>
@@ -160,9 +157,14 @@ const Navbar = ({ onOpenContact }) => {
                 </NavLink>
                 <NavLink
                   to="/saved-pgs"
-                  className="block px-4 py-2 hover:bg-indigo-50"
+                  className="block px-4 py-2 hover:bg-indigo-50 flex items-center justify-between"
                 >
-                  Saved PGs
+                  <span>Saved PGs</span>
+                  {savedItems && savedItems.length > 0 && (
+                    <span className="ml-2 bg-indigo-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+                      {savedItems.length}
+                    </span>
+                  )}
                 </NavLink>
                 <div className="border-t border-gray-100 my-1"></div>
                 <button

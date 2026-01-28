@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthUser } from "../../context/AuthuserContext";
+import { AuthUser } from "../../context/AuthUserContext";
 import { updateProfile } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { __AUTH, __DB } from "../../backend/firebaseConfig";
@@ -172,36 +172,51 @@ const Profile = () => {
     "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
   const inputClass = (isEditing) =>
-    `block w-full pl-10 pr-3 py-3 sm:text-sm rounded-lg border focus:ring-indigo-500 focus:border-indigo-500 transition-colors ${
+    `block w-full pl-10 pr-3 py-3 sm:text-sm rounded-lg border focus:ring-blue-500 focus:border-blue-500 transition-colors text-white ${
       isEditing
-        ? "border-gray-300 bg-white"
-        : "border-transparent bg-gray-50 text-gray-500"
+        ? "border-indigo-600/50 bg-indigo-950/50"
+        : "border-transparent bg-indigo-900/30 text-indigo-300"
     }`;
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-950 pb-12 px-4 sm:px-6 lg:px-8">
+      {/* Background Glow Effects */}
+      <div className="fixed top-1/4 left-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="fixed bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div className="max-w-4xl mx-auto pt-8 relative z-10">
         <Toaster position="top-right" />
 
+        {/* Animated Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-            My <span className="text-indigo-600">Profile</span>
+          <h1 className="text-4xl font-extrabold text-white sm:text-5xl mb-3 tracking-tight">
+            My Profile <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500"></span>
           </h1>
-          <p className="mt-2 text-lg text-gray-600">
+          <p className="text-indigo-300 text-lg font-medium">
             Manage your personal information
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-          <div className="h-32 bg-gradient-to-r from-indigo-500 to-purple-600 relative"></div>
+        {/* Main Card */}
+        <div className="bg-indigo-900/60 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden border border-indigo-700/50 transition-all duration-300 hover:border-indigo-600/70">
+          {/* Gradient Header with Pattern */}
+          <div className="h-40 bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-700 relative overflow-hidden">
+            {/* Animated Background Pattern */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjA1IiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+            
+            {/* Floating Shapes */}
+            <div className="absolute top-10 left-10 w-20 h-20 bg-white/5 rounded-full blur-xl animate-pulse"></div>
+            <div className="absolute bottom-10 right-20 w-32 h-32 bg-blue-300/5 rounded-full blur-2xl animate-pulse delay-700"></div>
+          </div>
 
-          <div className="px-6 pb-8 relative">
-            <div className="relative -mt-16 mb-6 flex justify-center">
+          <div className="px-6 sm:px-8 pb-8 relative">
+            {/* Profile Image with Enhanced Styling */}
+            <div className="relative -mt-20 mb-6 flex justify-center">
               <div className="relative group">
                 <img
                   src={profileImage}
                   alt="Profile"
-                  className={`w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover bg-white ${
+                  className={`w-36 h-36 rounded-full border-4 border-indigo-900 shadow-2xl object-cover bg-indigo-800 ring-4 ring-blue-500/30 transition-all duration-300 group-hover:ring-blue-500/50 ${
                     uploading ? "opacity-50" : ""
                   }`}
                   onError={(e) => {
@@ -212,20 +227,20 @@ const Profile = () => {
 
                 {/* Upload Spinner Overlay */}
                 {uploading && (
-                  <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/30 z-10">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                  <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 z-10">
+                    <div className="animate-spin rounded-full h-10 w-10 border-4 border-blue-500 border-t-transparent"></div>
                   </div>
                 )}
 
-                {/* Edit Controls Overlay */}
+                {/* Edit Controls Overlay with Better Animation */}
                 {isEditing && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-600/80 to-indigo-600/80 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 scale-95 group-hover:scale-100">
                     <label
                       htmlFor="photo-upload"
-                      className="p-2 bg-white/20 hover:bg-white/40 rounded-full cursor-pointer text-white mr-2"
+                      className="p-3 bg-white/20 hover:bg-white/30 rounded-full cursor-pointer text-white mr-2 transition-all duration-200 hover:scale-110"
                       title="Change Photo"
                     >
-                      <FaCamera />
+                      <FaCamera size={18} />
                       <input
                         id="photo-upload"
                         type="file"
@@ -239,38 +254,45 @@ const Profile = () => {
                       <button
                         type="button"
                         onClick={handleDeleteImage}
-                        className="p-2 bg-red-500/80 hover:bg-red-600/90 rounded-full text-white"
+                        className="p-3 bg-red-500/80 hover:bg-red-600 rounded-full text-white transition-all duration-200 hover:scale-110"
                         title="Remove Photo"
                       >
-                        <FaTrash size={14} />
+                        <FaTrash size={16} />
                       </button>
                     )}
                   </div>
                 )}
+                
+                {/* Edit Badge */}
                 {!isEditing && (
-                  <div className="absolute bottom-2 right-2 bg-indigo-600 text-white p-1.5 rounded-full border-2 border-white shadow-sm">
-                    <FaPen size={10} />
+                  <div className="absolute bottom-2 right-2 bg-gradient-to-br from-blue-600 to-indigo-600 text-white p-2 rounded-full border-2 border-indigo-900 shadow-lg">
+                    <FaPen size={12} />
                   </div>
                 )}
               </div>
             </div>
 
             <form onSubmit={handleUpdateProfile}>
-              <div className="space-y-8">
+              <div className="space-y-6">
                 {/* Personal Information Section */}
-                <div>
-                  <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 border-b pb-2">
-                    Personal Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-indigo-900/40 backdrop-blur-sm rounded-2xl p-6 border border-indigo-700/40 transition-all duration-300 hover:border-indigo-600/60 hover:shadow-lg hover:shadow-blue-500/20">
+                  <div className="flex items-center gap-2 mb-6">
+                    <div className="p-2 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg">
+                      <FaUser className="text-white" size={18} />
+                    </div>
+                    <h3 className="text-xl font-bold text-white">
+                      Personal Information
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {/* Full Name */}
                     <div className="relative">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-indigo-200 mb-1">
                         Full Name
                       </label>
                       <div className="relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <FaUser className="text-gray-400" />
+                          <FaUser className="text-indigo-400" />
                         </div>
                         <input
                           type="text"
@@ -414,11 +436,16 @@ const Profile = () => {
                 </div>
 
                 {/* Location Information Section */}
-                <div>
-                  <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4 border-b pb-2">
-                    Location Details
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-indigo-900/40 backdrop-blur-sm rounded-2xl p-6 border border-indigo-700/40 transition-all duration-300 hover:border-indigo-600/60 hover:shadow-lg hover:shadow-blue-500/20">
+                  <div className="flex items-center gap-2 mb-6">
+                    <div className="p-2 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg">
+                      <FaMapMarkerAlt className="text-white" size={18} />
+                    </div>
+                    <h3 className="text-xl font-bold text-white">
+                      Location Details
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     {/* Address */}
                     <div className="relative md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -506,31 +533,35 @@ const Profile = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                <div className="flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-indigo-700/40">
                   {isEditing ? (
                     <>
                       <button
                         type="button"
                         onClick={() => {
                           setIsEditing(false);
-                          // Re-trigger fetch or reset logic if needed, simplify by reloading page or just close for now
                           window.location.reload();
                         }}
                         disabled={loading || uploading}
-                        className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+                        className="inline-flex items-center justify-center px-6 py-3 border-2 border-indigo-700 shadow-sm text-sm font-semibold rounded-xl text-indigo-200 bg-indigo-900/50 hover:bg-indigo-800/60 hover:border-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                       >
-                        <FaTimes className="mr-2" /> Cancel
+                        <FaTimes className="mr-2" size={16} /> 
+                        Cancel
                       </button>
                       <button
                         type="submit"
                         disabled={loading || uploading}
-                        className="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="inline-flex items-center justify-center px-10 py-3 border border-transparent text-base font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 hover:from-blue-700 hover:via-indigo-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-xl shadow-blue-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-600/60 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-xl"
                       >
                         {loading ? (
-                          "Saving..."
+                          <>
+                            <div className="animate-spin rounded-full h-5 w-5 border-3 border-white border-t-transparent mr-2"></div>
+                            <span className="font-semibold">Saving...</span>
+                          </>
                         ) : (
                           <>
-                            <FaSave className="mr-2" /> Save Changes
+                            <FaSave className="mr-2" size={18} /> 
+                            <span>Save Changes</span>
                           </>
                         )}
                       </button>
@@ -539,9 +570,10 @@ const Profile = () => {
                     <button
                       type="button"
                       onClick={() => setIsEditing(true)}
-                      className="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-md transition-all hover:-translate-y-0.5"
+                      className="inline-flex items-center justify-center px-10 py-3 border border-transparent text-base font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-600 hover:from-blue-700 hover:via-indigo-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-xl shadow-blue-500/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-600/60 active:scale-95"
                     >
-                      <FaPen className="mr-2" /> Edit Details
+                      <FaPen className="mr-2" size={16} /> 
+                      <span>Edit Profile</span>
                     </button>
                   )}
                 </div>

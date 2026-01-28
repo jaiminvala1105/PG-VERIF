@@ -6,8 +6,9 @@ import Home from "../pages/Home";
 import ForgotPassword from "../auth/ForgotPassword";
 import ListYourPG from "../pages/ListYourPG";
 import Pg from "../components/Pg";
-import ContactUs from "../components/ContactUs";
+import HelpCenter from "../pages/HelpCenter";
 import Profile from "../pages/profile/Profile";
+import SavedPGs from "../pages/SavedPGs";
 import Layout from "../layout/Layout";
 
 import AdminLayout from "../admin/layout/AdminLayout";
@@ -38,20 +39,8 @@ export const router = createBrowserRouter([
         element: <ForgotPassword />,
       },
       {
-        path: "/admin/pg",
-        element: <AdminPg />,
-      },
-      {
-        path:'/contact-us',
-        element: (
-<<<<<<< HEAD
-          
-=======
-          <div className="min-h-screen bg-gray-950 flex justify-center items-start">
->>>>>>> 8ebcb73 (Updateding successfully)
-             <ContactUs/>
-         
-        )
+        path:'/help-center',
+        element: <HelpCenter />
       },
       {
         path: '/list-your-pg',
@@ -70,6 +59,10 @@ export const router = createBrowserRouter([
             element: <Profile />,
           },
         ],
+      },
+      {
+        path: "/saved-pgs",
+        element: <SavedPGs />,
       },
       {
         path: "*",

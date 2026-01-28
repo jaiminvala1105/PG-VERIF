@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import 'leaflet/dist/leaflet.css';
@@ -17,21 +17,82 @@ let DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
+// Cache for location coordinates to avoid repeated API calls
+const locationCoordinatesCache = new Map();
+
 // Helper to update map center when activePgId changes
 const MapUpdater = ({ activePg, pgs }) => {
   const map = useMap();
+  const [geocoding, setGeocoding] = useState(false);
 
   useEffect(() => {
-    if (activePg && activePg.locationCoords) {
-      map.flyTo([activePg.locationCoords.lat, activePg.locationCoords.lng], 15, {
-        duration: 2
-      });
-    } else if (pgs.length > 0 && pgs[0].locationCoords) {
-       // Optional: Fit bounds of all PGs
-       // const bounds = L.latLngBounds(pgs.map(p => [p.locationCoords.lat, p.locationCoords.lng]));
-       // map.fitBounds(bounds);
-    }
-  }, [activePg, map]);
+    const updateMapLocation = async () => {
+      if (!activePg) return;
+
+      // Case 1: PG has precise coordinates
+      if (activePg.locationCoords?.lat && activePg.locationCoords?.lng) {
+        const lat = parseFloat(activePg.locationCoords.lat);
+        const lng = parseFloat(activePg.locationCoords.lng);
+        
+        // Validate coordinates are valid numbers
+        if (isFinite(lat) && isFinite(lng)) {
+          map.flyTo([lat, lng], 15, {
+            duration: 1.5
+          });
+        }
+        return;
+      }
+
+      // Case 2: PG doesn't have coordinates, try location-based geocoding
+      if (activePg.location && !geocoding) {
+        const location = activePg.location.trim();
+        
+        if (!location) return;
+
+        // Check cache first (use full location as key for better accuracy)
+        if (locationCoordinatesCache.has(location)) {
+          const coords = locationCoordinatesCache.get(location);
+          if (isFinite(coords.lat) && isFinite(coords.lng)) {
+            map.flyTo([coords.lat, coords.lng], 13, {
+              duration: 1.5
+            });
+          }
+          return;
+        }
+
+        // Geocode the full location (handles both "City, State" and "Area, City" formats)
+        setGeocoding(true);
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`
+          );
+          const data = await response.json();
+          
+          if (data && data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lng = parseFloat(data[0].lon);
+            
+            // Validate coordinates before using
+            if (isFinite(lat) && isFinite(lng)) {
+              const coords = { lat, lng };
+              locationCoordinatesCache.set(location, coords);
+              map.flyTo([lat, lng], 13, {
+                duration: 1.5
+              });
+            } else {
+              console.warn('Invalid coordinates received from geocoding:', data[0]);
+            }
+          }
+        } catch (error) {
+          console.error('Geocoding error:', error);
+        } finally {
+          setGeocoding(false);
+        }
+      }
+    };
+
+    updateMapLocation();
+  }, [activePg, map, geocoding]);
 
   return null;
 };

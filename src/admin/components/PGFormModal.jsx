@@ -10,6 +10,7 @@ const PGFormModal = ({ isOpen, onClose, onSubmit, initialData, isEditing }) => {
     longitude: '',
     amenities: '',
     image: '',
+    gender: 'Boys',
     pricing: {
       ac: { sharing2: '', sharing3: '', sharing4: '' },
       nonAc: { sharing2: '', sharing3: '', sharing4: '' }
@@ -39,6 +40,7 @@ const PGFormModal = ({ isOpen, onClose, onSubmit, initialData, isEditing }) => {
         longitude: initialData.locationCoords?.lng || '',
         amenities: initialData.amenities ? initialData.amenities.join(', ') : '',
         image: initialData.image || '',
+        gender: initialData.gender || 'Boys',
         pricing: pricingData
       });
     } else {
@@ -49,6 +51,7 @@ const PGFormModal = ({ isOpen, onClose, onSubmit, initialData, isEditing }) => {
         longitude: '',
         amenities: '',
         image: '',
+        gender: 'Boys',
         pricing: {
           ac: { sharing2: '', sharing3: '', sharing4: '' },
           nonAc: { sharing2: '', sharing3: '', sharing4: '' }
@@ -107,6 +110,29 @@ const PGFormModal = ({ isOpen, onClose, onSubmit, initialData, isEditing }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Clean up pricing - remove empty values
+    const cleanPricing = {};
+    
+    ['ac', 'nonAc'].forEach(category => {
+      const categoryPrices = {};
+      let hasValidPrice = false;
+      
+      Object.keys(formData.pricing[category]).forEach(sharingKey => {
+        const price = formData.pricing[category][sharingKey];
+        // Only include if price exists and is not empty string or '0'
+        if (price && price !== '' && price !== '0') {
+          categoryPrices[sharingKey] = price;
+          hasValidPrice = true;
+        }
+      });
+      
+      // Only include category if it has at least one valid price
+      if (hasValidPrice) {
+        cleanPricing[category] = categoryPrices;
+      }
+    });
+    
     // Convert amenities string back to array
     const submittedData = {
       ...formData,
@@ -114,12 +140,15 @@ const PGFormModal = ({ isOpen, onClose, onSubmit, initialData, isEditing }) => {
       locationCoords: {
          lat: parseFloat(formData.latitude) || 0,
          lng: parseFloat(formData.longitude) || 0
-      }
+      },
+      pricing: cleanPricing
     };
-    // remove separate lat/lng fields from final object if you want, or keep them. 
-    // Cleanest to just pass the constructed object.
+    
+    // Remove separate lat/lng fields
     delete submittedData.latitude;
     delete submittedData.longitude;
+    
+    console.log('💾 Cleaned data being saved:', submittedData);
     
     onSubmit(submittedData);
   };
@@ -153,6 +182,21 @@ const PGFormModal = ({ isOpen, onClose, onSubmit, initialData, isEditing }) => {
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
                 placeholder="Ex: Sky High Residency"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-400 mb-1">Gender</label>
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                required
+                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all cursor-pointer"
+              >
+                <option value="Boys">Boys</option>
+                <option value="Girls">Girls</option>
+                <option value="Unisex">Unisex</option>
+              </select>
             </div>
 
             <div>
