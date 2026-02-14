@@ -1,8 +1,15 @@
-import React from 'react';
-import { X, MapPin, Users, IndianRupee, Wifi, UtensilsCrossed, Dumbbell, Wind, Droplets, Zap, Home } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, MapPin, Users, IndianRupee, Wifi, UtensilsCrossed, Dumbbell, Wind, Droplets, Zap, Home, Star, MessageSquare, AlertCircle } from 'lucide-react';
+import StarRating from './StarRating.jsx';
+import ReviewModal from './ReviewModal.jsx';
+import ReviewsList from './ReviewsList.jsx';
+import ComplaintModal from './ComplaintModal.jsx';
+import { formatRatingBreakdown } from '../helper/ratingUtils.js';
 
 const PGDetailsModal = ({ isOpen, onClose, pg }) => {
-  const [selectedPricingTab, setSelectedPricingTab] = React.useState('ac');
+  const [selectedPricingTab, setSelectedPricingTab] = useState('ac');
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showComplaintModal, setShowComplaintModal] = useState(false);
   
   // Set default tab when modal opens or pg changes
   React.useEffect(() => {
@@ -221,30 +228,119 @@ const PGDetailsModal = ({ isOpen, onClose, pg }) => {
             )}
           </div>
 
+          {/* Ratings & Reviews Section */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                <Star className="w-5 h-5 text-yellow-500" fill="currentColor" />
+                Ratings & Reviews
+              </h3>
+              <button
+                onClick={() => setShowReviewModal(true)}
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Write Review
+              </button>
+            </div>
+
+            {/* Rating Summary */}
+            {pg.ratings && pg.ratings.totalReviews > 0 ? (
+              <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 mb-4">
+                <div className="flex items-start gap-6">
+                  {/* Average Rating */}
+                  <div className="text-center">
+                    <div className="text-4xl font-bold text-white mb-2">
+                      {pg.ratings.average.toFixed(1)}
+                    </div>
+                    <StarRating rating={pg.ratings.average} size={20} />
+                    <p className="text-gray-400 text-xs mt-2">
+                      {pg.ratings.totalReviews} review{pg.ratings.totalReviews !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+
+                  {/* Rating Breakdown */}
+                  <div className="flex-1">
+                    {formatRatingBreakdown(pg.ratings.breakdown, pg.ratings.totalReviews).map(({ rating, count, percentage }) => (
+                      <div key={rating} className="flex items-center gap-3 mb-2">
+                        <span className="text-gray-400 text-sm w-8">{rating}★</span>
+                        <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-yellow-500 transition-all duration-300"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                        <span className="text-gray-400 text-xs w-12 text-right">{percentage}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gray-800/30 rounded-xl p-8 border border-gray-700/50 text-center mb-4">
+                <Star className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                <p className="text-gray-400 mb-4">No ratings yet</p>
+                <button
+                  onClick={() => setShowReviewModal(true)}
+                  className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors"
+                >
+                  Be the first to review
+                </button>
+              </div>
+            )}
+
+            {/* Reviews List */}
+            <ReviewsList pgId={pg.id} />
+          </div>
+
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-4 border-t border-gray-800">
-            <button
-              onClick={() => {
-                if (pg.locationCoords?.lat && pg.locationCoords?.lng) {
-                  window.open(`https://www.google.com/maps/dir/?api=1&destination=${pg.locationCoords.lat},${pg.locationCoords.lng}`, '_blank');
-                } else {
-                  window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pg.location)}`, '_blank');
-                }
-              }}
-              className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <MapPin className="w-4 h-4" />
-              Get Directions
-            </button>
+          <div className="flex flex-col gap-3 pt-4 border-t border-gray-800">
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  if (pg.locationCoords?.lat && pg.locationCoords?.lng) {
+                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${pg.locationCoords.lat},${pg.locationCoords.lng}`, '_blank');
+                  } else {
+                    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pg.location)}`, '_blank');
+                  }
+                }}
+                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <MapPin className="w-4 h-4" />
+                Get Directions
+              </button>
+              <button
+                onClick={() => setShowComplaintModal(true)}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <AlertCircle className="w-4 h-4" />
+                File Complaint
+              </button>
+            </div>
             <button
               onClick={onClose}
-              className="px-6 py-3 border border-gray-700 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors font-semibold"
+              className="w-full py-3 border border-gray-700 text-gray-300 hover:bg-gray-800 rounded-lg transition-colors font-semibold"
             >
               Close
             </button>
           </div>
         </div>
       </div>
+
+      {/* Review Modal */}
+      <ReviewModal
+        isOpen={showReviewModal}
+        onClose={() => setShowReviewModal(false)}
+        pg={pg}
+      />
+
+      {/* Complaint Modal */}
+      <ComplaintModal
+        isOpen={showComplaintModal}
+        onClose={() => setShowComplaintModal(false)}
+        pgId={pg?.id}
+        pgName={pg?.name}
+      />
     </div>
   );
 };

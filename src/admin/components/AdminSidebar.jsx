@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { LayoutDashboard, Home, Users, LogOut, ArrowLeft } from 'lucide-react';
+import { LayoutDashboard, Home, Users, LogOut, ArrowLeft, AlertCircle } from 'lucide-react';
 import { AuthUser } from '../../context/AuthuserContext'; 
 import { FetchDataFromBackend } from '../../context/BackendUserContext';
 
@@ -27,6 +27,12 @@ const AdminSidebar = () => {
       icon: Users, 
       label: 'Manage Users',
       allowedRoles: ['admin'] // Restricted to main Admin
+    },
+    { 
+      path: '/admin/complaints', 
+      icon: AlertCircle, 
+      label: 'Complaints',
+      allowedRoles: ['admin', 'owner']
     },
   ];
 

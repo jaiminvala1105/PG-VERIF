@@ -8,10 +8,13 @@ import {
   FaUser,
   FaGraduationCap
 } from "react-icons/fa";
-import { Heart } from "lucide-react";
+import { Heart, GitCompare, AlertCircle } from "lucide-react";
 import ScheduleVisitModal from "./ScheduleVisitModal";
 import PGDetailsModal from "./PGDetailsModal";
 import { FavoritesContext } from "../context/FavoritesContext";
+import { useComparison } from "../context/ComparisonContext";
+import StarRating from "./StarRating.jsx";
+import { getComplaintCountByStatus } from "../helper/complaintUtils";
 
 // Helper to calculate starting price
 const getStartingPrice = (pricing, legacyPrice) => {
@@ -37,6 +40,20 @@ const PgCard = ({ pg, onHover }) => {
   
   const { toggleSave, isSaved } = useContext(FavoritesContext);
   const saved = isSaved(pg.id);
+  
+  const { addToComparison, removeFromComparison, isInComparison, isMaxReached } = useComparison();
+  const inComparison = isInComparison(pg.id);
+  
+  const [complaintCount, setComplaintCount] = useState(0);
+  
+  // Fetch complaint count on mount
+  React.useEffect(() => {
+    const fetchCount = async () => {
+      const count = await getComplaintCountByStatus(pg.id, 'pending');
+      setComplaintCount(count);
+    };
+    fetchCount();
+  }, [pg.id]);
 
   const openModal = (tab) => {
     setVisitModalTab(tab);
@@ -86,6 +103,17 @@ const PgCard = ({ pg, onHover }) => {
     toggleSave(pg.id);
   };
 
+  const handleToggleComparison = (e) => {
+    e.stopPropagation();
+    if (inComparison) {
+      removeFromComparison(pg.id);
+    } else {
+      if (!isMaxReached()) {
+        addToComparison(pg);
+      }
+    }
+  };
+
   return (
     <>
     <div 
@@ -103,6 +131,26 @@ const PgCard = ({ pg, onHover }) => {
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
         
+        {/* Comparison Checkbox - Top Left */}
+        <button
+          onClick={handleToggleComparison}
+          disabled={!inComparison && isMaxReached()}
+          className={`absolute top-4 left-4 p-2 backdrop-blur-sm rounded-full shadow-lg transition-all duration-200 z-20 group/compare ${
+            inComparison 
+              ? "bg-indigo-600 hover:bg-indigo-700" 
+              : "bg-white/90 hover:bg-white"
+          } ${!inComparison && isMaxReached() ? "opacity-50 cursor-not-allowed" : ""}`}
+          aria-label={inComparison ? "Remove from comparison" : "Add to comparison"}
+        >
+          <GitCompare
+            className={`w-5 h-5 transition-all duration-200 ${
+              inComparison 
+                ? "text-white" 
+                : "text-gray-600 group-hover/compare:text-indigo-600"
+            }`}
+          />
+        </button>
+
         {/* Heart Icon - Save to Favorites */}
         <button
           onClick={handleToggleSave}
@@ -144,6 +192,29 @@ const PgCard = ({ pg, onHover }) => {
                 <div className="text-gray-500 text-sm mt-1 flex items-center gap-1">
                     {pg.location}
                 </div>
+            {/* Rating */}
+            <div className="flex items-center gap-2 mb-2">
+              {pg.ratings && pg.ratings.totalReviews > 0 ? (
+                <>
+                  <StarRating rating={pg.ratings.average} size={16} />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {pg.ratings.average.toFixed(1)} ({pg.ratings.totalReviews})
+                  </span>
+                </>
+              ) : (
+                <span className="text-sm text-gray-400">No ratings yet</span>
+              )}
+              
+              {/* Complaint Badge */}
+              {complaintCount > 0 && (
+                <div className="flex items-center gap-1 px-2 py-0.5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md ml-2">
+                  <AlertCircle className="w-3 h-3 text-red-500" />
+                  <span className="text-xs font-medium text-red-600 dark:text-red-400">
+                    {complaintCount}
+                  </span>
+                </div>
+              )}
+            </div>
             </div>
             
             <div className="flex items-center gap-1 bg-gray-800 text-gray-200 px-3 py-1 rounded-full text-xs font-medium border border-gray-700">

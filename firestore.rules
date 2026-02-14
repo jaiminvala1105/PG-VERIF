@@ -1,0 +1,85 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function: Check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Helper function: Check if user is admin (checks role in users collection)
+    function isAdmin() {
+      return isSignedIn() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // PG Management with Admin Support
+    match /pgs/{pgId} {
+      // Anyone (even guests) can search and view PGs
+      allow read: if true; 
+
+      // Authenticated users or admins can create PGs
+      allow create: if isSignedIn();
+
+      // Owners can update/delete their own PGs, OR admins can manage ALL PGs (for verification)
+      allow update, delete: if isSignedIn() && 
+                             (resource.data.ownerId == request.auth.uid || isAdmin());
+    }
+
+    // User Profile Management with Admin Support
+    match /users/{userId} {
+      // Users can read their own profile, OR admins can read all user profiles
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      
+      // Users can create/update their own profile, admins can manage all users
+      allow create, update: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      
+      // Only admins can delete users
+      allow delete: if isAdmin();
+    }
+
+    // Complaints collection
+    match /complaints/{complaintId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    // Feedback collection
+    match /feedback/{feedbackId} {
+      allow read: if isAdmin();
+      allow create: if true; // Anyone can submit feedback
+      allow update, delete: if isAdmin();
+    }
+
+    // Help Center / Support Tickets
+    match /help-tickets/{ticketId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isAdmin();
+    }
+
+    // Roommates collection
+    match /roommates/{roommateId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // Reviews collection
+    match /reviews/{reviewId} {
+      allow read: if true; // Public read
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // Scheduled Visits
+    match /scheduled-visits/{visitId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+  }
+}

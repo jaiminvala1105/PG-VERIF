@@ -92,6 +92,16 @@ const Navbar = () => {
             PG
           </NavLink>
         </li>
+        <li>
+          <NavLink to={"/find-roommates"} className={linkClasses}>
+            Find Roommates
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to={"/compare-pgs"} className={linkClasses}>
+            Compare PGs
+          </NavLink>
+        </li>
       </>
     );
   };
@@ -165,6 +175,12 @@ const Navbar = () => {
                       {savedItems.length}
                     </span>
                   )}
+                </NavLink>
+                <NavLink
+                  to="/my-complaints"
+                  className="block px-4 py-2 hover:bg-indigo-50 flex items-center justify-between"
+                >
+                  <span>My Complaints</span>
                 </NavLink>
                 <div className="border-t border-gray-100 my-1"></div>
                 <button

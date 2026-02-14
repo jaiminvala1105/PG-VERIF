@@ -1,190 +1,211 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { MapPin, User, Users, IndianRupee, Search } from 'lucide-react';
-import axios from 'axios';
-import { toast } from 'react-hot-toast';
-
+import React from 'react';
+import { Home as HomeIcon, ArrowRight, Shield, Users, CheckCircle, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
   const navigate = useNavigate();
-  const [filters, setFilters] = useState({
-    location: '',
-    gender: '',
-    occupancy: '',
-    budget: ''
-  });
 
-  const [locationSuggestions, setLocationSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const searchTimeout = useRef(null);
-
-  // Handle Location Search (Nominatim)
-  const handleLocationChange = (e) => {
-    const value = e.target.value;
-    setFilters(prev => ({ ...prev, location: value }));
-
-    // Debounce API call
-    if (searchTimeout.current) clearTimeout(searchTimeout.current);
-    if (!value) {
-      setLocationSuggestions([]);
-      return;
+  const pgCategories = [
+    {
+      title: "Girls PG",
+      subtitle: "Safe & secure living for women",
+      count: "3.2K+",
+      image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=2071&auto=format&fit=crop",
+      color: "from-pink-500 to-rose-500"
+    },
+    {
+      title: "Co-ed PG",
+      subtitle: "Modern shared living spaces",
+      count: "1.8K+",
+      image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop",
+      color: "from-indigo-500 to-purple-500"
+    },
+    {
+      title: "Boys PG",
+      subtitle: "Comfortable stays for men",
+      count: "2.5K+",
+      image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2070&auto=format&fit=crop",
+      color: "from-blue-500 to-cyan-500"
     }
-
-    searchTimeout.current = setTimeout(async () => {
-      try {
-        const response = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${value}&countrycodes=in&limit=5`);
-        setLocationSuggestions(response.data);
-        setShowSuggestions(true);
-      } catch (error) {
-        console.error("Error fetching locations:", error);
-      }
-    }, 300);
-  };
-
-  const selectLocation = (place) => {
-    setFilters(prev => ({ ...prev, location: place.display_name.split(',')[0] })); // Just taking the first part for cleaner UI
-    setShowSuggestions(false);
-  };
-
-  const handleSearch = () => {
-    console.log("Searching with:", filters);
-    toast.success("Searching for PGs...");
-    navigate('/pg', { state: filters });
-  };
+  ];
 
   return (
-    <div className="bg-gray-950 pt-12 text-white min-h-[60vh] flex flex-col items-center justify-center relative">
-      {/* Background Glow */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
-
-      {/* Main Heading */}
-      <div className="text-center z-10 mb-12 animate-fade-in-up">
-        <h1 className="text-4xl md:text-6xl font-bold mb-3 tracking-tight">
-          Find Your Perfect PG
-          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500 mt-2">
-            Accommodation
-          </span>
-        </h1>
-        <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
-          Discover comfortable and affordable paying guest options in your preferred location
-        </p>
+    <div className="relative min-h-[85vh] bg-gradient-to-br from-gray-950 via-gray-900 to-indigo-950 overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-600/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-3xl" />
       </div>
 
-      {/* Search Bar Container */}
-      <div className="w-full max-w-5xl bg-gray-900/80 backdrop-blur-md border border-gray-800 rounded-3xl p-4 shadow-2xl z-20 relative">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gray-900/50 to-gray-950" />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
           
-          {/* Location Input */}
-          <div className="md:col-span-4 relative group">
-            <div className="flex items-center space-x-3 bg-gray-800/50 p-3 rounded-2xl border border-gray-700/50 group-focus-within:border-blue-500/50 transition">
-              <MapPin className="text-gray-400 w-5 h-5 flex-shrink-0" />
-              <div className="w-full">
-                <input
-                  type="text"
-                  placeholder="Location (City, Area)"
-                  value={filters.location}
-                  onChange={handleLocationChange}
-                  onFocus={() => setShowSuggestions(true)}
-                  className="w-full bg-transparent outline-none text-white placeholder-gray-500 text-sm"
-                />
+          {/* Left Content */}
+          <div className="space-y-8 z-10">
+            
+            {/* Trust Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full">
+              <Sparkles className="w-4 h-4 text-indigo-400" />
+              <span className="text-sm text-gray-300 font-medium">India's Most Trusted PG Platform</span>
+            </div>
+
+            {/* Main Heading */}
+            <div className="space-y-4">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white leading-tight">
+                Find Your Dream PG
+                <span className="block bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+               
+                </span>
+                in Minutes!
+              </h1>
+              <p className="text-lg md:text-xl text-gray-400 leading-relaxed max-w-xl">
+                From verified properties to hassle-free bookings, we've got everything to make your PG search simple and stress-free.
+              </p>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap gap-4">
+              <button
+                onClick={() => navigate('/pg')}
+                className="group px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 transition-all duration-300 flex items-center gap-2"
+              >
+                <HomeIcon className="w-5 h-5" />
+                Browse All PGs
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+              
+              <button
+                onClick={() => {
+                  document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="px-8 py-4 bg-white/5 hover:bg-white/10 backdrop-blur-sm border-2 border-indigo-500/50 hover:border-indigo-400 text-white font-bold rounded-xl transition-all duration-300"
+              >
+                How It Works
+              </button>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="grid grid-cols-2 gap-6 pt-6 border-t border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-500/20 rounded-lg">
+                  <Shield className="w-5 h-5 text-green-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">100% Verified</p>
+                  <p className="text-white font-semibold">Properties</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-500/20 rounded-lg">
+                  <Users className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">50K+ Happy</p>
+                  <p className="text-white font-semibold">Tenants</p>
+                </div>
               </div>
             </div>
-            {/* Suggestions Dropdown */}
-            {showSuggestions && locationSuggestions.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800 border border-gray-700 rounded-xl shadow-xl overflow-hidden z-50">
-                {locationSuggestions.map((place) => (
-                  <button
-                    key={place.place_id}
-                    onClick={() => selectLocation(place)}
-                    className="w-full text-left px-4 py-3 hover:bg-gray-700 text-sm text-gray-300 transition"
-                  >
-                    {place.display_name}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
 
-          {/* Gender Preference */}
-          <div className="md:col-span-2">
-            <div className="flex items-center space-x-3 bg-gray-800/50 p-3 rounded-2xl border border-gray-700/50 hover:border-gray-600 transition">
-              <User className="text-gray-400 w-5 h-5" />
-              <select 
-                className="w-full bg-transparent outline-none text-white text-sm appearance-none cursor-pointer"
-                value={filters.gender}
-                onChange={(e) => setFilters({...filters, gender: e.target.value})}
-              >
-                <option value="" className="bg-gray-800 text-gray-400">Gender</option>
-                <option value="Male" className="bg-gray-800">Boys</option>
-                <option value="Female" className="bg-gray-800">Girls</option>
-                <option value="Unisex" className="bg-gray-800">Unisex</option>
-              </select>
+          {/* Right Content - PG Category Cards */}
+          <div className="relative z-10 hidden lg:block">
+            <div className="grid grid-cols-2 gap-4">
+              {pgCategories.map((category, index) => (
+                <div
+                  key={category.title}
+                  className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-gray-900/50 backdrop-blur-sm hover:border-indigo-500/50 transition-all duration-500 cursor-pointer hover:scale-105 ${
+                    index === 0 ? 'col-span-2' : ''
+                  }`}
+                  onClick={() => navigate('/pg')}
+                  style={{
+                    height: index === 0 ? '280px' : '240px'
+                  }}
+                >
+                  {/* Background Image */}
+                  <div className="absolute inset-0">
+                    <img
+                      src={category.image}
+                      alt={category.title}
+                      className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-700"
+                    />
+                    <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-40 group-hover:opacity-50 transition-opacity`} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent" />
+                  </div>
+
+                  {/* Content Overlay */}
+                  <div className="relative h-full p-6 flex flex-col justify-between">
+                    {/* Property Count Badge */}
+                    <div className="self-end">
+                      <div className="px-4 py-2 bg-black/60 backdrop-blur-md border border-white/20 rounded-full">
+                        <span className="text-white font-bold text-sm">{category.count} Properties</span>
+                      </div>
+                    </div>
+
+                    {/* Title & CTA */}
+                    <div className="space-y-3">
+                      <div>
+                        <h3 className="text-2xl font-bold text-white mb-1">{category.title}</h3>
+                        <p className="text-gray-300 text-sm">{category.subtitle}</p>
+                      </div>
+                      
+                      <button className="inline-flex items-center gap-2 text-white font-semibold group-hover:gap-3 transition-all">
+                        Explore
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-
-          {/* Occupancy */}
-          <div className="md:col-span-2">
-            <div className="flex items-center space-x-3 bg-gray-800/50 p-3 rounded-2xl border border-gray-700/50 hover:border-gray-600 transition">
-              <Users className="text-gray-400 w-5 h-5" />
-              <select 
-                className="w-full bg-transparent outline-none text-white text-sm appearance-none cursor-pointer"
-                value={filters.occupancy}
-                onChange={(e) => setFilters({...filters, occupancy: e.target.value})}
-              >
-                <option value="" className="bg-gray-800 text-gray-400">Occupancy</option>
-                <option value="Single" className="bg-gray-800">Single</option>
-                <option value="Double" className="bg-gray-800">Double</option>
-                <option value="Triple" className="bg-gray-800">Triple</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Budget */}
-          <div className="md:col-span-2">
-            <div className="flex items-center space-x-3 bg-gray-800/50 p-3 rounded-2xl border border-gray-700/50 hover:border-gray-600 transition">
-              <IndianRupee className="text-gray-400 w-5 h-5" />
-              <select 
-                className="w-full bg-transparent outline-none text-white text-sm appearance-none cursor-pointer"
-                value={filters.budget}
-                onChange={(e) => setFilters({...filters, budget: e.target.value})}
-              >
-                <option value="" className="bg-gray-800 text-gray-400">Budget</option>
-                <option value="5000-10000" className="bg-gray-800">₹5k - ₹10k</option>
-                <option value="10000-15000" className="bg-gray-800">₹10k - ₹15k</option>
-                <option value="15000+" className="bg-gray-800">₹15k+</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Search Button */}
-          <div className="md:col-span-2">
-            <button 
-              onClick={handleSearch}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold p-3 rounded-2xl transition flex items-center justify-center space-x-2"
-            >
-              <Search className="w-5 h-5" />
-              <span>Search PG</span>
-            </button>
-          </div>
-
         </div>
 
-        {/* Popular Cities */}
-        <div className="mt-6 flex flex-wrap items-center gap-2 text-sm text-gray-400">
-          <span className="mr-2">Popular:</span>
-          {['Mumbai', 'Delhi', 'Bangalore', 'Pune', 'Hyderabad', 'Ahmedabad'].map((city) => (
-            <button 
-              key={city}
-              onClick={() => {
-                setFilters(prev => ({...prev, location: city}));
-                handleSearch();
-              }}
-              className="px-3 py-1 bg-gray-800 rounded-full hover:bg-gray-700 hover:text-white transition cursor-pointer"
-            >
-              {city}
-            </button>
-          ))}
+        {/* Mobile PG Cards - Horizontal Scroll */}
+        <div className="lg:hidden mt-12 -mx-4 px-4">
+          <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x">
+            {pgCategories.map((category) => (
+              <div
+                key={category.title}
+                className="group relative flex-shrink-0 w-72 h-64 overflow-hidden rounded-2xl border border-white/10 bg-gray-900/50 backdrop-blur-sm cursor-pointer snap-start"
+                onClick={() => navigate('/pg')}
+              >
+                {/* Background Image */}
+                <div className="absolute inset-0">
+                  <img
+                    src={category.image}
+                    alt={category.title}
+                    className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+                  />
+                  <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-40`} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent" />
+                </div>
+
+                {/* Content */}
+                <div className="relative h-full p-6 flex flex-col justify-between">
+                  <div className="self-end">
+                    <div className="px-3 py-1.5 bg-black/60 backdrop-blur-md border border-white/20 rounded-full">
+                      <span className="text-white font-bold text-xs">{category.count} Properties</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div>
+                      <h3 className="text-xl font-bold text-white">{category.title}</h3>
+                      <p className="text-gray-300 text-sm">{category.subtitle}</p>
+                    </div>
+                    <button className="inline-flex items-center gap-2 text-white font-semibold">
+                      Explore <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
